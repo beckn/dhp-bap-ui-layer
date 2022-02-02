@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  storefront:
+    build: . 
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - MAPS_KEY=AIzaSyCE5_1vSXIap5MmYA4qWwHPQRpyDckvfVU       
+   # command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
