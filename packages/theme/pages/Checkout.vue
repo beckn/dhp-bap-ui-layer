@@ -6,7 +6,7 @@
           <SfIcon color="var(--c-primary)" size="20px" icon="chevron_left" />
         </span>
       </div>
-      <div>Billing and Shipping</div>
+      <div>Patient Billing</div>
     </div>
     <div v-if="enableLoader" key="loadingCircle" class="loader-circle">
       <LoadingCircle :enable="enableLoader" />
@@ -81,7 +81,7 @@
       </div>
 
       <div class="sub-heading">
-        <div class="p-name">Shipping</div>
+        <div class="p-name">Patient address</div>
         <SfButton
           v-if="isShippingAddressFilled"
           class="sf-button--pure"
@@ -119,42 +119,10 @@
             v-e2e="'add-shipping-details'"
             class="address-text color-def"
           >
-            Add Shipping Details
+            Add Patient Details
           </div>
         </CardContent>
       </Card>
-
-      <div v-if="isShippingAddressFilled" class="sub-heading">
-        <div class="p-name">Billing</div>
-        <SfButton
-          v-if="isBillingAddressFilled || !shippingAsBilling"
-          class="sf-button--pure"
-          @click="toggleBillingModal"
-        >
-          <div class="color-def">Change</div>
-        </SfButton>
-      </div>
-      <Card v-if="isShippingAddressFilled" class="card-checkbox">
-        <CardContent>
-          <div class="address-bar-icon">
-            <SfCheckbox
-              @change="changeShippingAsBilling"
-              :selected="shippingAsBilling"
-              name="shipping"
-            />
-          </div>
-          <div class="address-text">Same as Shipping Details</div>
-        </CardContent>
-      </Card>
-
-      <AddressCard
-        v-if="isBillingAddressFilled && !shippingAsBilling"
-        :name="billingAddress.name"
-        :address="billingAddress.address"
-        :mobile="billingAddress.mobile"
-        :pincode="billingAddress.pincode"
-        :building="billingAddress.building"
-      />
 
       <div class="sub-heading">
         <div class="p-name">Payment</div>
@@ -224,20 +192,10 @@
     </Footer>
     <ModalSlide :visible="shippingAddressModal" @close="toggleShippingModal">
       <AddressInputs
-        :buttonText="'Save Shipping Details'"
-        :headingText="'Shipping Details'"
+        :buttonText="'Save Patient Address'"
+        :headingText="'Pateint Address'"
         :addressDetails="shippingAddress"
         @getAddress="toggleShippingModal"
-        @initCall="initOrder"
-      />
-    </ModalSlide>
-    <ModalSlide :visible="billingAddressModal" @close="toggleBillingModal">
-      <AddressInputs
-        :buttonText="'Save Billing Details'"
-        :buttonEnable="false"
-        :headingText="'Billing Details'"
-        :addressDetails="billingAddress"
-        @getAddress="toggleBillingModal"
         @initCall="initOrder"
       />
     </ModalSlide>
