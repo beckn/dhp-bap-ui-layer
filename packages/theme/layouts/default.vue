@@ -1,28 +1,28 @@
 <template>
   <div>
-      <LazyHydrate when-visible>
-        <!-- <TopBar class="desktop-only" /> -->
-      </LazyHydrate>
-      <!-- <LazyHydrate when-idle> -->
-      <AppHeader />
-      <!-- </LazyHydrate> -->
+    <LazyHydrate when-visible>
+      <!-- <TopBar class="desktop-only" /> -->
+    </LazyHydrate>
+    <!-- <LazyHydrate when-idle> -->
+    <AppHeader />
+    <!-- </LazyHydrate> -->
 
-      <div id="layout">
-    <Error>
+    <div id="layout">
+      <Error>
         <nuxt :key="$route.fullPath" />
-    </Error>
-        <ClearCartPopup />
-        <LazyHydrate when-visible>
-          <!-- <BottomNavigation /> -->
-        </LazyHydrate>
-        <CartSidebar />
-        <WishlistSidebar />
-        <LoginModal />
-        <Notification />
-      </div>
+      </Error>
+      <!-- <ClearCartPopup /> -->
       <LazyHydrate when-visible>
-        <!-- <AppFooter /> -->
+        <!-- <BottomNavigation /> -->
       </LazyHydrate>
+      <CartSidebar />
+      <WishlistSidebar />
+      <LoginModal />
+      <Notification />
+    </div>
+    <LazyHydrate when-visible>
+      <!-- <AppFooter /> -->
+    </LazyHydrate>
   </div>
 </template>
 
@@ -35,7 +35,7 @@ import WishlistSidebar from '~/components/WishlistSidebar.vue';
 import LoginModal from '~/components/LoginModal.vue';
 import LazyHydrate from 'vue-lazy-hydration';
 import Notification from '~/components/Notification';
-import ClearCartPopup from '~/components/ClearCartPopup.vue';
+// import ClearCartPopup from '~/components/ClearCartPopup.vue';
 import Error from '~/pages/Error.vue';
 
 // import { useCart } from '@vue-storefront/beckn';
@@ -53,7 +53,7 @@ export default {
     WishlistSidebar,
     LoginModal,
     Notification,
-    ClearCartPopup,
+    // ClearCartPopup,
     Error
   },
   setup() {

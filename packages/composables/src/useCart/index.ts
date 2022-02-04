@@ -55,22 +55,26 @@ const params = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addItem: async (context: Context, { currentCart, product, quantity, customQuery }) => {
     // debugger;
-    if (customQuery.clearCart) {
-      localStorage.removeItem('cartData');
-      currentCart = {
-        items: [],
-        bpp: null,
-        bppProvider: null,
-        totalPrice: 0,
-        totalItems: 0,
-        newBpp: null,
-        newProvider: null,
-        newProduct: null,
-        locations: [],
-        cartTime: null,
-        quote: null
-      };
-    }
+    // if (customQuery.clearCart) {
+    //   localStorage.removeItem('cartData');
+    //   currentCart = {
+    //     items: [],
+    //     bpp: null,
+    //     bppProvider: null,
+    //     totalPrice: 0,
+    //     totalItems: 0,
+    //     newBpp: null,
+    //     newProvider: null,
+    //     newProduct: null,
+    //     locations: [],
+    //     cartTime: null,
+    //     quote: null
+    //   };
+    // }
+    console.log("currentCart",currentCart)
+    console.log("product-1",product)
+    console.log('quantity',quantity)
+    console.log('customquery',customQuery)
     const price = productGetters.getPrice(product).regular;
     if (Boolean(currentCart.bpp) && (currentCart.bppProvider?.id !== customQuery.bppProvider.id || customQuery.bpp.id !== currentCart.bpp?.id)) {
       currentCart.newBpp = customQuery.bpp;

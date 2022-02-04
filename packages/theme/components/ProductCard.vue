@@ -11,7 +11,7 @@
               :height="90"
             />
           </div>
-          <div>
+          <div v-if="isBookingSlot">
             <SfButton class="button-pos sf-button--pure color-primary">
               <span class="book-appointment">
                 {{ _pSlotStart }} - {{ _pSlotEnd }}</span
@@ -23,7 +23,7 @@
           <div>
             <div class="s-p-name">{{ _pName }}</div>
             <div class="s-p-retailer">
-              {{ _pProviderName }},
+              {{ _pProviderName }}
               <span class="s-p-retailer-distance">{{ _pDistance }}</span>
             </div>
           </div>
@@ -38,8 +38,11 @@
             <div class="s-p-price" v-if="_updatedCount !== 0">
               ₹{{ _updatedPrice ? _updatedPrice : _pPrice }}
             </div>
-            <div>
-              <SfButton @click="$emit('goToCart')" class="button-pos sf-button--pure color-primary">
+            <div v-if="isBookAppointment">
+              <SfButton
+                @click="$emit('goToCart')"
+                class="button-pos sf-button--pure color-primary"
+              >
                 <span class="book-appointment">
                   Book an appointment</span
                 ></SfButton
@@ -127,7 +130,9 @@ export default {
     updatedCount: { type: Number, default: null },
     horizontalView: { type: Boolean, default: true },
     deleteCard: { type: Boolean, default: false },
-    dropdownCouner: { type: Boolean, default: false }
+    dropdownCouner: { type: Boolean, default: false },
+    isBookingSlot: { type: Boolean, default: false },
+    isBookAppointment: { type: Boolean, default: false }
   },
   setup(props, { emit }) {
     const _pName = computed(() => props.pName);

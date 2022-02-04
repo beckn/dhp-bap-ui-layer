@@ -61,7 +61,7 @@
               class="product-card"
               v-for="(product, index) in cartGetters.getItems(cart)"
               :key="index + 'new'"
-              :pName="cartGetters.getItemName(product)"
+              :pName="product.descriptor.name"
               :pPrice="cartGetters.getItemPrice(product).regular"
               :pImage="cartGetters.getItemImage(product)"
               :pCount="cartGetters.getItemQty(product)"
@@ -190,13 +190,15 @@ export default {
     toggleSearchVisible(false);
 
     const matchQuote = async () => {
-      if (cart.value.totalItems > 0 && localStorage.getItem('transactionId')) {
+      if (cart.value.totalItems > 0) {
         enableLoader.value = true;
-        const transactionId = localStorage.getItem('transactionId');
+
         const cartItems = await cart.value.items.map((item) => {
           return {
             id: item.id,
-            quantity: { count: item.quantity },
+            quantity: {
+              count: 1
+            },
             // eslint-disable-next-line camelcase
             bpp_id: cart.value.bpp.id,
             provider: {
@@ -207,7 +209,10 @@ export default {
         });
         const cartData = await init({
           // eslint-disable-next-line camelcase
-          context: { transaction_id: transactionId },
+          context: {
+            // transaction_id: transactionId,
+            domain: 'nic2004:85110'
+          },
           message: { cart: { items: cartItems } }
         });
 
@@ -219,19 +224,23 @@ export default {
             }
             if (newValue?.message?.quote && polling.value) {
               stopPolling();
+              localStorage.setItem(
+                'transactionId',
+                newValue?.context?.transaction_id
+              );
               const updatedCartData = cart.value.items.map((cartItem) => {
                 if (cartItem.updatedCount) cartItem.updatedCount = null;
                 if (cartItem.updatedPrice) cartItem.updatedPrice = null;
                 const quoteItem = newValue.message.quote?.items.filter(
                   (quoteItem) => quoteItem.id === cartItem.id
                 )[0];
-                if (
-                  parseFloat(cartItem.price.value) !==
-                  parseFloat(quoteItem.price.value)
-                ) {
-                  cartItem.updatedPrice = quoteItem.price.value;
-                  errPricechange.value = true;
-                }
+                // if (
+                //   parseFloat(cartItem.price.value) !==
+                //   parseFloat(quoteItem.price.value)
+                // ) {
+                //   cartItem.updatedPrice = quoteItem.price.value;
+                //   errPricechange.value = true;
+                // }
                 if (cartItem.quantity !== quoteItem.quantity.selected.count) {
                   cartItem.updatedCount = quoteItem.quantity.selected.count;
                   if (quoteItem.quantity.selected.count === 0)
@@ -323,7 +332,6 @@ export default {
       cart,
       openModal,
       itemNumber,
-      updateItemCount,
       footerClick,
       toggleModal,
       addQuantity,

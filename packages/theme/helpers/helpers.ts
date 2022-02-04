@@ -11,10 +11,16 @@ const helpers = {
   calculateDays
 };
 
-export const createOrderRequest = (transactionId, cart, shippingAddress, billingAddress, shippingAsBilling, gps) => {
-  const bAddress = shippingAsBilling
-    ? shippingAddress
-    : billingAddress;
+export const createOrderRequest = (
+  transactionId,
+  cart,
+  shippingAddress,
+  billingAddress,
+  shippingAsBilling,
+  gps,
+  domain
+) => {
+  const bAddress = shippingAsBilling ? shippingAddress : billingAddress;
 
   const items: any[] = cart.items.map((item) => {
     return {
@@ -24,9 +30,7 @@ export const createOrderRequest = (transactionId, cart, shippingAddress, billing
       bpp_id: cart.bpp.id,
       provider: {
         id: cart.bppProvider.id,
-        locations: [
-          item.location_id
-        ]
+        locations: [item.location_id]
       }
     };
   });
@@ -34,7 +38,8 @@ export const createOrderRequest = (transactionId, cart, shippingAddress, billing
   const params = {
     context: {
       // eslint-disable-next-line camelcase
-      transaction_id: transactionId
+      transaction_id: transactionId,
+      domain: domain
     },
     message: {
       items: items,
@@ -83,8 +88,25 @@ export const createOrderRequest = (transactionId, cart, shippingAddress, billing
   return params;
 };
 
-export const createConfirmOrderRequest = (transactionId, cart, shippingAddress, billingAddress, shippingAsBilling, gps, paymentInfo) => {
-  const params: any = createOrderRequest(transactionId, cart, shippingAddress, billingAddress, shippingAsBilling, gps);
+export const createConfirmOrderRequest = (
+  transactionId,
+  cart,
+  shippingAddress,
+  billingAddress,
+  shippingAsBilling,
+  gps,
+  paymentInfo,
+  domain
+) => {
+  const params: any = createOrderRequest(
+    transactionId,
+    cart,
+    shippingAddress,
+    billingAddress,
+    shippingAsBilling,
+    gps,
+    domain
+  );
   params.message.payment = {
     // eslint-disable-next-line camelcase
     paid_amount: paymentInfo.amount,
@@ -104,7 +126,19 @@ export const bookingSlot = (timeStamp: string) => {
     .slice(1)
     .join(' ');
 
-  return  `${localTime}`;
+  return `${localTime}`;
+};
+
+export const returnAptFulfillmentItems = (items, fulfillment) => {
+  const outputItems = items.map((i) => {
+    fulfillment.map((ful) => {
+      if (i.fulfillment_id === ful.id) {
+        i.descriptor.name = ful.agent.name;
+        i.descriptor.images[0] = ful.agent.image;
+      }
+    });
+  });
+  return outputItems;
 };
 
 export default helpers;

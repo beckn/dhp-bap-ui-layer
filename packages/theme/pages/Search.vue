@@ -143,20 +143,45 @@
               :key="prIndex"
             >
               <div
-                v-for="(product, fulfillmentsId) in provider.fulfillments"
-                :key="fulfillmentsId"
+                v-for="(product, pIndex) in provider.items"
+                :key="
+                  bppIndex +
+                    '-' +
+                    prIndex +
+                    '-' +
+                    pIndex +
+                    '-' +
+                    keyVal +
+                    'product'
+                "
                 class="results--mobile"
               >
+                {{
+                  log(
+                    'items',
+                    returnAptFulfillmentItems(
+                      provider.items,
+                      provider.fulfillments
+                    )
+                  )
+                }}
                 <ProductCard
-                  :pName="product.agent.name"
+                  :pName="product.descriptor.name"
+                  @goToCart="updateItemCount(provider, bpp, pIndex)"
                   :pProviderName="provider.descriptor.name"
                   :pPrice="200"
-                  :pImage="product.agent.image"
+                  :pImage="productGetters.getGallery(product)[0].small[0]"
                   :pDistance="'800m away'"
                   :pCount="2"
                   :horizontalView="false"
-                  :pSlotStart="bookingSlot(product.start.time.timestamp)"
-                  :pSlotEnd="bookingSlot(product.end.time.timestamp)"
+                  :pSlotStart="
+                    bookingSlot(provider.fulfillments[0].start.time.timestamp)
+                  "
+                  :pSlotEnd="
+                    bookingSlot(provider.fulfillments[0].end.time.timestamp)
+                  "
+                  :isBookAppointment="true"
+                  :isBookingSlot="true"
                 />
               </div>
             </div>
@@ -203,7 +228,7 @@ import ProductCard from '~/components/ProductCard';
 import Footer from '~/components/Footer';
 import { useUiState } from '~/composables';
 import debounce from 'lodash.debounce';
-import { bookingSlot } from '../helpers/helpers';
+import { bookingSlot, returnAptFulfillmentItems } from '../helpers/helpers';
 import {
   productGetters,
   providerGetters,
@@ -223,13 +248,18 @@ export default {
     Footer,
     SfImage
   },
+  methods: {
+    log(str, exp) {
+      console.log(str, exp);
+    }
+  },
   setup(_, context) {
     const {
       searchString,
       changeSearchString,
       selectedLocation,
-      toggleLoadindBar,
-      clearCartPopup
+      toggleLoadindBar
+      // clearCartPopup
     } = useUiState();
     const goBack = () => {
       context.root.$router.back();
@@ -258,14 +288,14 @@ export default {
       diagnostics: 'Search by diagnostic service name, diagnostic lab name'
     };
     console.log(cart);
-    watch(
-      () => clearCartPopup.value,
-      (newVal) => {
-        if (!newVal) {
-          keyVal.value++;
-        }
-      }
-    );
+    // watch(
+    //   () => clearCartPopup.value,
+    //   (newVal) => {
+    //     if (!newVal) {
+    //       keyVal.value++;
+    //     }
+    //   }
+    // );
     const handleSearch = debounce((paramValue) => {
       if (polling.value) stopPolling();
       enableLoader.value = true;
@@ -281,10 +311,6 @@ export default {
         symptoms: searchBySymptoms
         // eslint-disable-next-line no-unused-vars
       }).then((_) => {
-        localStorage.setItem(
-          'transactionId',
-          result.value.data.ackResponse.context.transaction_id
-        );
         localStorage.setItem(
           'domain',
           result.value.data.ackResponse.context.domain
@@ -401,10 +427,10 @@ export default {
         }
       });
     };
-    const updateItemCount = (data, provider, bpp, index) => {
+    const updateItemCount = async (provider, bpp, index) => {
       addItem({
         product: provider.items[index],
-        quantity: data,
+        quantity: 1,
         customQuery: {
           bpp: {
             id: bpp.bpp_id,
@@ -417,6 +443,7 @@ export default {
           locations: provider.locations
         }
       });
+      await context.root.$router.push('/cart');
     };
     const onDropdownHeaderClick = () => {
       if (selectedLocation.value.latitude || selectedLocation.value.longitude) {
@@ -460,7 +487,8 @@ export default {
       onSelectDropdownItem,
       searchByMapper,
       searchByPlaceholderMapper,
-      bookingSlot
+      bookingSlot,
+      returnAptFulfillmentItems
     };
   }
 };

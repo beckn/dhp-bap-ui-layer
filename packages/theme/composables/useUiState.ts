@@ -18,7 +18,7 @@ const state = reactive({
     longitude: '',
     address: ''
   },
-  clearCartPopup: false,
+  // clearCartPopup: false,
   enableLoadindBar: false,
   explorePageData: null
 });
@@ -60,7 +60,6 @@ const useUiState = () => {
   const searchString = computed(() => state.searchString);
   const changeSearchString = (data) => {
     state.searchString = data;
-
   };
 
   const IsSearchVisible = computed(() => state.IsSearchVisible);
@@ -73,10 +72,10 @@ const useUiState = () => {
     state.selectedLocation = location;
   };
 
-  const clearCartPopup = computed(() => state.clearCartPopup);
-  const changeClearCart = (value: boolean) => {
-    state.clearCartPopup = value;
-  };
+  // const clearCartPopup = computed(() => state.clearCartPopup);
+  // const changeClearCart = (value: boolean) => {
+  //   state.clearCartPopup = value;
+  // };
 
   const enableLoadindBar = computed(() => state.enableLoadindBar);
   const toggleLoadindBar = (value = !state.enableLoadindBar) => {
@@ -98,7 +97,7 @@ const useUiState = () => {
     searchString,
     IsSearchVisible,
     selectedLocation,
-    clearCartPopup,
+    // clearCartPopup,
     enableLoadindBar,
     explorePageData,
     toggleCartSidebar,
@@ -111,7 +110,7 @@ const useUiState = () => {
     changeSearchString,
     toggleSearchVisible,
     updateLocation,
-    changeClearCart,
+    // changeClearCart,
     toggleLoadindBar,
     updateExpPageData
   };

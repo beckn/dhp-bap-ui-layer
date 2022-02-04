@@ -32,7 +32,7 @@
                 class="product-card"
                 v-for="(product, index) in cartGetters.getItems(cart)"
                 :key="index + 'new'"
-                :pName="cartGetters.getItemName(product)"
+                :pName="product.descriptor.name"
                 :pPrice="cartGetters.getItemPrice(product).regular"
                 :pImage="cartGetters.getItemImage(product)"
                 :pCount="cartGetters.getItemQty(product)"

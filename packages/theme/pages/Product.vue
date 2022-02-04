@@ -7,8 +7,8 @@
     <div class="product">
       <div @click="goBack" class="sf-chevron--left sf-chevron icon_back">
         <span class="sf-search-bar__icon">
-        <SfIcon color="var(--c-primary)" size="20px" icon="chevron_left" />
-      </span>
+          <SfIcon color="var(--c-primary)" size="20px" icon="chevron_left" />
+        </span>
       </div>
       <div class="images">
         <LazyHydrate when-visible>
@@ -38,7 +38,11 @@
           <div class="s-p-price">
             ₹ {{ productGetters.getPrice(product).regular }}
           </div>
-          <AddToCart :key="keyVal+'product-page'" :value="cartGetters.getItemQty(isInCart({product}))" @updateItemCount="updateCart" />
+          <AddToCart
+            :key="keyVal + 'product-page'"
+            :value="cartGetters.getItemQty(isInCart({ product }))"
+            @updateItemCount="updateCart"
+          />
         </div>
         <div><hr class="sf-divider divider" /></div>
 
@@ -125,7 +129,7 @@ import { useUiState } from '~/composables';
 import { useCart, cartGetters, productGetters } from '@vue-storefront/beckn';
 import MobileStoreBanner from '~/components/MobileStoreBanner.vue';
 import LazyHydrate from 'vue-lazy-hydration';
-import { onBeforeMount, ref, watch} from '@vue/composition-api';
+import { onBeforeMount, ref, watch } from '@vue/composition-api';
 
 export default {
   name: 'Product',
@@ -133,19 +137,19 @@ export default {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setup(props, context) {
-    const { toggleSearchVisible, clearCartPopup } = useUiState();
+    const { toggleSearchVisible } = useUiState();
     const keyVal = ref(0);
 
     toggleSearchVisible(false);
 
-    watch(() => clearCartPopup.value, (newVal) => {
-      if (!newVal) {
-        keyVal.value++;
-      }
-    });
+    // watch(() => clearCartPopup.value, (newVal) => {
+    //   if (!newVal) {
+    //     keyVal.value++;
+    //   }
+    // });
 
     const data = context.root.$route.query.data;
-    const { product, bpp, bppProvider, locations} = JSON.parse(
+    const { product, bpp, bppProvider, locations } = JSON.parse(
       Buffer.from(data, 'base64').toString()
     );
     const { addItem, cart, load, isInCart } = useCart();
@@ -160,7 +164,11 @@ export default {
       addItem({
         product: product,
         quantity: value,
-        customQuery: { bpp: bpp, bppProvider: bppProvider, locations: locations}
+        customQuery: {
+          bpp: bpp,
+          bppProvider: bppProvider,
+          locations: locations
+        }
       });
     };
 
@@ -229,8 +237,8 @@ export default {
   position: absolute;
   margin: 15px;
   z-index: 2;
-  .sf-icon{
-    --icon-color: #F37A20 !important;
+  .sf-icon {
+    --icon-color: #f37a20 !important;
     width: 20px;
     height: 20px;
   }
@@ -289,7 +297,7 @@ export default {
     }
   }
 }
-.sf-accordion.product__tabs.has-chevron{
+.sf-accordion.product__tabs.has-chevron {
   margin-top: 0 !important;
 }
 .divider {
