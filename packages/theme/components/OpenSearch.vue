@@ -7,8 +7,9 @@
       </h3>
       <h4>for All</h4>
       <p>
-        A global marketplace to discover and buy anything you need. Just type
-        what you want to buy and we'll take care of the rest.
+        A global healthcare platform to discover and connect with healthcare
+        professionals and diagnostic service providers. Just type what you are
+        looking for and we will take care of the rest.
       </p>
       <div class="position-relative">
         <div class="open-search-input">
@@ -20,9 +21,12 @@
             }"
             @click="onDropdownHeaderClick"
           >
-            <div v-if="selectedSearchByOption === 'Consultation'">
-              All
+            <!-- <div v-if="selectedSearchByOption === 'consultations' || ''">
+              Consult
             </div>
+            <div v-if="selectedSearchByOption === 'diagnostics' || ''">
+              Diagnose
+            </div> -->
             <SfIcon icon="chevron_down" size="xxs" />
           </div>
           <input
@@ -115,20 +119,24 @@ export default {
     const errorMsg = ref(false);
     const openSearchByDropdown = ref(false);
     const searchByMapper = {
-      Consultation: 'Consultation',
-      Diagnostics: 'Diagnostics'
+      consultations: 'consultations',
+      diagnostics: 'diagnostics'
     };
     const searchByPlaceholderMapper = {
-      Consultation: 'Search by doctor, clinic or hospital name',
-      Diagnostics: 'Search by diagnostic service name, diagnostic lab name'
+      all: 'Search by doctor, clinic or hospital name',
+      consultations: 'Search by doctor, clinic or hospital name',
+      diagnostics: 'Search by diagnostic service name, diagnostic lab name'
     };
-    const selectedSearchByOption = ref('Consultation');
+    const selectedSearchByOption = ref('consultations');
     const onDropdownHeaderClick = () => {
       if (selectedLocation.value.latitude || selectedLocation.value.longitude) {
         openSearchByDropdown.value = !openSearchByDropdown.value;
       }
     };
     const onSelectDropdownItem = (selectedOption) => {
+      if (!selectedOption) {
+        selectedSearchByOption.value = 'consultations';
+      }
       selectedSearchByOption.value = selectedOption;
       openSearchByDropdown.value = false;
     };
@@ -139,7 +147,8 @@ export default {
           name: 'Search',
           params: {
             searchKey: message.value,
-            searchBy: selectedSearchByOption.value
+            searchBy: selectedSearchByOption.value,
+            symptoms: symptomsText.value
           }
         });
       } else {

@@ -95,4 +95,16 @@ export const createConfirmOrderRequest = (transactionId, cart, shippingAddress, 
   return params;
 };
 
+export const bookingSlot = (timeStamp: string) => {
+  const localDateAndTime = new Date(timeStamp);
+  const localTime = localDateAndTime.toLocaleTimeString();
+  const localDate = localDateAndTime.toDateString();
+  const localDateWithoutDay = localDate
+    .split(' ')
+    .slice(1)
+    .join(' ');
+
+  return  `${localTime}`;
+};
+
 export default helpers;

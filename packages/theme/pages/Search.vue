@@ -19,7 +19,7 @@
             }"
             @click="onDropdownHeaderClick"
           >
-            <div v-if="selectedSearchByOption === 'search-by-all'">
+            <div v-if="selectedSearchByOption === 'consultations'">
               All
             </div>
             <SfImage
@@ -100,7 +100,8 @@
               </svg>
             </div>
           </div>
-          <div v-for="(bpp, bppIndex) in pollResults" :key="bppIndex">
+          <!-- <div v-for="(bpp, bppIndex) in pollResults" :key="bppIndex">
+            {{ log('Bpp', bpp) }}
             <div
               v-for="(provider, prIndex) in bpp.bpp_providers"
               :key="prIndex"
@@ -135,6 +136,30 @@
                 />
               </div>
             </div>
+          </div> -->
+          <div v-for="(bpp, bppIndex) in pollResults" :key="bppIndex">
+            <div
+              v-for="(provider, prIndex) in bpp.bpp_providers"
+              :key="prIndex"
+            >
+              <div
+                v-for="(product, fulfillmentsId) in provider.fulfillments"
+                :key="fulfillmentsId"
+                class="results--mobile"
+              >
+                <ProductCard
+                  :pName="product.agent.name"
+                  :pProviderName="provider.descriptor.name"
+                  :pPrice="200"
+                  :pImage="product.agent.image"
+                  :pDistance="'800m away'"
+                  :pCount="2"
+                  :horizontalView="false"
+                  :pSlotStart="bookingSlot(product.start.time.timestamp)"
+                  :pSlotEnd="bookingSlot(product.end.time.timestamp)"
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div v-if="noSearchFound" key="no-search" class="before-results">
@@ -156,7 +181,7 @@
       </transition-group>
       <LoadingCircle :enable="enableLoader" key="loding-cir" />
     </div>
-    <div v-if="cartGetters.getTotalItems(cart)" class="sr-footer">
+    <!-- <div v-if="cartGetters.getTotalItems(cart)" class="sr-footer">
       <Footer
         @buttonClick="footerClick"
         :totalPrice="cartGetters.getTotals(cart).total"
@@ -167,7 +192,7 @@
           <SfIcon icon="empty_cart" color="white" :coverage="1" />
         </template>
       </Footer>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -178,6 +203,7 @@ import ProductCard from '~/components/ProductCard';
 import Footer from '~/components/Footer';
 import { useUiState } from '~/composables';
 import debounce from 'lodash.debounce';
+import { bookingSlot } from '../helpers/helpers';
 import {
   productGetters,
   providerGetters,
@@ -218,16 +244,18 @@ export default {
     const { pollResults, poll, polling, stopPolling } = useSearch('search');
     const noSearchFound = ref(false);
     const openSearchByDropdown = ref(false);
+    const searchBySymptoms = ref(context.root.$route.params.symptoms || null);
     const selectedSearchByOption = ref(
       context.root.$route.params.searchBy || 'search-by-all'
     );
     const searchByMapper = {
-      consultation: 'consultation',
-      Diagnostics: 'Diagnostics'
+      consultations: 'consultations',
+      diagnostics: 'diagnostics'
     };
     const searchByPlaceholderMapper = {
-      Consultation: 'Search by doctor, clinic or hospital name',
-      Diagnostics: 'Search by diagnostic service name, diagnostic lab name'
+      all: 'Search by doctor, clinic or hospital name',
+      consultation: 'Search by doctor, clinic or hospital name',
+      diagnostics: 'Search by diagnostic service name, diagnostic lab name'
     };
     console.log(cart);
     watch(
@@ -249,12 +277,17 @@ export default {
           selectedLocation?.value?.latitude +
           ',' +
           selectedLocation?.value?.longitude,
-        searchBy: selectedSearchByOption.value
+        searchBy: selectedSearchByOption.value,
+        symptoms: searchBySymptoms
         // eslint-disable-next-line no-unused-vars
       }).then((_) => {
         localStorage.setItem(
           'transactionId',
           result.value.data.ackResponse.context.transaction_id
+        );
+        localStorage.setItem(
+          'domain',
+          result.value.data.ackResponse.context.domain
         );
         poll({
           // eslint-disable-next-line camelcase
@@ -320,7 +353,7 @@ export default {
       let reusltNum = 0;
       for (const bpp of pollResults?.value) {
         for (const provider of bpp.bpp_providers) {
-          reusltNum += provider.items.length;
+          reusltNum += provider.fulfillments.length;
         }
       }
       return reusltNum;
@@ -391,6 +424,9 @@ export default {
       }
     };
     const onSelectDropdownItem = (selectedOption) => {
+      if (!selectedOption) {
+        selectedSearchByOption.value = 'consultations';
+      }
       selectedSearchByOption.value = selectedOption;
       openSearchByDropdown.value = false;
     };
@@ -423,7 +459,8 @@ export default {
       onDropdownHeaderClick,
       onSelectDropdownItem,
       searchByMapper,
-      searchByPlaceholderMapper
+      searchByPlaceholderMapper,
+      bookingSlot
     };
   }
 };
