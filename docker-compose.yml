@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  storefront-ui:  
+    build:
+      context: .
+      dockerfile: ui.dockerfile  
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - MAPS_KEY=SOMEKEY      
